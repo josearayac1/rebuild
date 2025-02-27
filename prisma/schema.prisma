@@ -1,0 +1,137 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserType {
+  ADMIN
+  PROFESSIONAL
+  OWNER
+}
+
+model User {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  name            String
+  password        String
+  userType        UserType
+  profileCompleted Boolean  @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  // Relaciones 1:1 con perfiles
+  ownerProfile    OwnerProfile?
+  professionalProfile ProfessionalProfile?
+  
+  // Datos de recuperación de contraseña
+  resetToken      String?
+  resetTokenExpiry DateTime?
+}
+
+model Region {
+  id          String    @id @default(cuid())
+  name        String    // Nombre de la región
+  ordinal     String    // Número romano de la región
+  cities      City[]    // Relación con ciudades
+  
+  // Perfiles relacionados
+  ownerProfiles     OwnerProfile[]
+  professionalProfiles ProfessionalProfile[]
+}
+
+model City {
+  id          String    @id @default(cuid())
+  name        String    // Nombre de la ciudad
+  region      Region    @relation(fields: [regionId], references: [id])
+  regionId    String
+  communes    Commune[] // Relación con comunas
+  
+  // Perfiles relacionados
+  ownerProfiles     OwnerProfile[]
+  professionalProfiles ProfessionalProfile[]
+}
+
+model Commune {
+  id          String    @id @default(cuid())
+  name        String    // Nombre de la comuna
+  city        City      @relation(fields: [cityId], references: [id])
+  cityId      String
+  
+  // Perfiles relacionados
+  ownerProfiles     OwnerProfile[]
+  professionalProfiles ProfessionalProfile[]
+}
+
+model OwnerProfile {
+  id              String    @id @default(cuid())
+  user            User      @relation(fields: [userId], references: [id])
+  userId          String    @unique
+  phone           String    
+  address         String    
+  company         String?   // Opcional
+  profilePicture   String?   // Nueva propiedad para la foto de perfil
+  
+  // Ubicación
+  region      Region    @relation(fields: [regionId], references: [id])
+  regionId    String
+  city        City      @relation(fields: [cityId], references: [id])
+  cityId      String
+  commune     Commune   @relation(fields: [communeId], references: [id])
+  communeId   String
+  
+  // Relaciones
+  properties  Property[]
+}
+
+model ProfessionalProfile {
+  id              String    @id @default(cuid())
+  user            User      @relation(fields: [userId], references: [id])
+  userId          String    @unique
+  phone           String    
+  profession      String    
+  experience      Int       
+  specialties     String[]  
+  profilePicture   String?   // Nueva propiedad para la foto de perfil
+  
+
+  // Ubicación
+  region      Region    @relation(fields: [regionId], references: [id])
+  regionId    String
+  city        City      @relation(fields: [cityId], references: [id])
+  cityId      String
+  commune     Commune   @relation(fields: [communeId], references: [id])
+  communeId   String
+  
+  // Relaciones
+  inspections Inspection[]
+}
+
+model Property {
+  id          String       @id @default(cuid())
+  address     String
+  owner       OwnerProfile @relation(fields: [ownerId], references: [id])
+  ownerId     String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  
+  inspections Inspection[]
+}
+
+model Inspection {
+  id          String       @id @default(cuid())
+  property    Property     @relation(fields: [propertyId], references: [id])
+  propertyId  String
+  inspector   ProfessionalProfile @relation(fields: [inspectorId], references: [id])
+  inspectorId String
+  status      String      // pending, completed, etc
+  needsBudget Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+} 
