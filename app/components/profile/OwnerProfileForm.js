@@ -54,6 +54,13 @@ export default function OwnerProfileForm({ user }) {
     }
   }, [formData.cityId])
 
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    // Ahora es seguro usar el router
+    console.log('Current path:', router.pathname);
+  }, [router.isReady]);
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setFormData({ ...formData, profilePicture: file });

@@ -4,11 +4,13 @@ import ProtectedRoute from '../components/auth/ProtectedRoute'
 import '../components/auth/LoginTabs.css'
 import SearchBar from '../components/dashboard/SearchBar'
 import LogoutButton from '../components/auth/LogoutButton'
+import { useRouter } from 'next/navigation'
 
 export default function OwnerDashboard() {
   const [user, setUser] = useState(null)
   const [ownerData, setOwnerData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -41,6 +43,10 @@ export default function OwnerDashboard() {
     checkAuth()
   }, [])
 
+  const handleCreateProperty = () => {
+    router.push('/property/create')
+  }
+
   if (loading) {
     return <div>Cargando...</div>
   }
@@ -66,6 +72,25 @@ export default function OwnerDashboard() {
             <div className="visits-section">
               <SearchBar />
               <h2>Propiedades</h2>
+              <button
+                onClick={handleCreateProperty}
+                style={{
+                  float: 'right',
+                  marginRight: '20px',
+                  backgroundColor: '#f0ad4e',
+                  border: 'none',
+                  color: 'white',
+                  padding: '10px 20px',
+                  textAlign: 'center',
+                  textDecoration: 'none',
+                  display: 'inline-block',
+                  fontSize: '16px',
+                  borderRadius: '5px',
+                  cursor: 'pointer'
+                }}
+              >
+                Crear Propiedad
+              </button>
               <div className="visits-container">
                 {/* Aquí irán las tarjetas de propiedades */}
               </div>
