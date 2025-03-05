@@ -18,7 +18,7 @@ export default function ProfileSetup() {
         if (response.ok) {
           const data = await response.json()
           if (data.user.profileCompleted) {
-            router.replace(data.user.userType === 'OWNER' ? '/dashboard' : '/profesional')
+            router.replace(data.user.userType === 'OWNER' ? '/owner' : '/profesional')
             return
           }
           setUser(data.user)

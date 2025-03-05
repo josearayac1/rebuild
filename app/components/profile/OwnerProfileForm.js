@@ -54,6 +54,11 @@ export default function OwnerProfileForm({ user }) {
     }
   }, [formData.cityId])
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setFormData({ ...formData, profilePicture: file });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
@@ -66,6 +71,7 @@ export default function OwnerProfileForm({ user }) {
     formDataToSend.append('regionId', formData.regionId);
     formDataToSend.append('cityId', formData.cityId);
     formDataToSend.append('communeId', formData.communeId);
+
     if (formData.profilePicture) {
       formDataToSend.append('profilePicture', formData.profilePicture);
     }
@@ -81,22 +87,11 @@ export default function OwnerProfileForm({ user }) {
         throw new Error(data.error)
       }
 
-      router.replace('/dashboard')
+      router.replace('/owner/')
     } catch (error) {
       setError(error.message)
     } finally {
       setLoading(false)
-    }
-  }
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setFormData({...formData, profilePicture: file})
-      }
-      reader.readAsDataURL(file)
     }
   }
 

@@ -53,7 +53,7 @@ export default function LoginTabs() {
       if (!data.user.profileCompleted) {
         router.replace('/profile/setup')
       } else {
-        router.replace(data.user.userType === 'OWNER' ? '/dashboard' : '/profesional')
+        router.replace(data.user.userType === 'OWNER' ? '/owner' : '/profesional')
       }
 
     } catch (error) {
