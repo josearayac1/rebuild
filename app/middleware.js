@@ -8,8 +8,8 @@ export async function middleware(request) {
   console.log('Middleware - Path:', request.nextUrl.pathname)
   console.log('Middleware - Token exists:', !!token)
 
-  // Rutas protegidas
-  if (request.nextUrl.pathname.startsWith('/dashboard') || 
+  // Rutas de usuario protegidas
+  if (request.nextUrl.pathname.startsWith('/owner') || //Aqui
       request.nextUrl.pathname.startsWith('/profesional')) {
     
     if (!token) {
@@ -26,9 +26,9 @@ export async function middleware(request) {
     }
 
     // Verificar tipo de usuario correcto
-    if (request.nextUrl.pathname.startsWith('/dashboard') && 
+    if (request.nextUrl.pathname.startsWith('/owner') && //Aqui
         payload.userType !== 'OWNER') {
-      console.log('Middleware - Invalid user type for dashboard')
+      console.log('Middleware - Invalid user type for owner')
       return NextResponse.redirect(new URL('/unauthorized', request.url))
     }
 

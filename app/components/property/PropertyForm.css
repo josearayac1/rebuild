@@ -1,0 +1,79 @@
+.propertyForm-container {
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    background-color: #FFA500;
+    padding: 2rem;
+    box-sizing: border-box;
+    display: block;
+    justify-content: space-between;
+  }
+
+.propertyForm-content-wrapper {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    max-width: 900px;
+    min-height: calc(100vh - 4rem);
+    display: flex;
+    flex-direction: column;
+  }
+  
+.propertyForm-nav {
+    background-color: transparent;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+.propertyForm-content {
+    padding: 2rem;
+    margin-left: 10rem;
+    margin-right: 10rem;
+    margin-top: 2rem;
+    display: block;
+    /*flex: 1;*/
+    /*grid-template-columns: 2fr 1fr;  /* Proporción 2:1 para las columnas */
+    gap: 2rem;
+  }
+
+.propertyForm-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin-bottom: 1.5rem;
+  }
+  
+.propertyForm-group label {
+    font-size: 0.875rem;
+    color: #333;
+  }
+  
+.propertyForm-group input {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 80%;
+    box-sizing: border-box;
+  }
+
+.submitCreateProperty-button {
+    background-color: #FFA500;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 0.5rem;
+    display: block;
+    margin-left: auto;
+    margin-right: 3rem;
+    margin-top: 3rem;
+  }
+
+.submitCreateProperty-button:hover {
+    background-color: #FF9000;
+  }

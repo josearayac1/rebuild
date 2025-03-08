@@ -44,7 +44,7 @@ export default function OwnerDashboard() {
   }, [])
 
   const handleCreateProperty = () => {
-    router.push('/property/create')
+    router.push('../property/create')
   }
 
   if (loading) {
@@ -86,7 +86,8 @@ export default function OwnerDashboard() {
                   display: 'inline-block',
                   fontSize: '16px',
                   borderRadius: '5px',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  width: '200px'
                 }}
               >
                 Crear Propiedad
