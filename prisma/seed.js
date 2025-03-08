@@ -2,55 +2,74 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
 async function main() {
-  // Crear Región Metropolitana
-  const metropolitana = await prisma.region.create({
-    data: {
-      name: 'Región Metropolitana de Santiago',
-      ordinal: 'XIII',
-      cities: {
-        create: [
-          {
-            name: 'Santiago',
-            communes: {
-              create: [
-                { name: 'Santiago' },
-                { name: 'Providencia' },
-                { name: 'Las Condes' },
-                { name: 'Ñuñoa' },
-                { name: 'La Reina' },
-                { name: 'Vitacura' },
-                { name: 'Lo Barnechea' },
-                { name: 'Independencia' },
-                { name: 'Recoleta' },
-                { name: 'Macul' },
-                { name: 'Peñalolén' },
-                { name: 'La Florida' },
-                { name: 'San Joaquín' },
-                { name: 'La Granja' },
-                { name: 'San Miguel' },
-                { name: 'Pedro Aguirre Cerda' },
-                { name: 'San Ramón' },
-                { name: 'La Cisterna' },
-                { name: 'El Bosque' },
-                { name: 'Lo Espejo' },
-                { name: 'Estación Central' },
-                { name: 'Cerrillos' },
-                { name: 'Maipú' },
-                { name: 'Quinta Normal' },
-                { name: 'Lo Prado' },
-                { name: 'Pudahuel' },
-                { name: 'Cerro Navia' },
-                { name: 'Renca' },
-                { name: 'Quilicura' },
-                { name: 'Conchalí' },
-                { name: 'Huechuraba' }
-              ]
-            }
-          }
-        ]
-      }
+  // Región Metropolitana y sus ciudades/comunas
+  const metropolitana = await prisma.region.upsert({
+    where: { name: 'Metropolitana de Santiago' },
+    update: {},
+    create: {
+      name: 'Metropolitana de Santiago',
+      ordinal: 'XIII'
     }
   })
+
+  const santiago = await prisma.city.upsert({
+    where: { name: 'Santiago' },
+    update: { regionId: metropolitana.id },
+    create: {
+      name: 'Santiago',
+      regionId: metropolitana.id
+    }
+  })
+
+  // Comunas de Santiago
+  const comunasSantiago = [
+    'Santiago', 'Providencia', 'Las Condes', 'Vitacura', 'La Reina',
+    'Ñuñoa', 'San Miguel', 'La Florida', 'Maipú', 'La Cisterna'
+  ]
+
+  for (const comunaName of comunasSantiago) {
+    await prisma.commune.upsert({
+      where: { name: comunaName },
+      update: { cityId: santiago.id },
+      create: {
+        name: comunaName,
+        cityId: santiago.id
+      }
+    })
+  }
+
+  // Nuevos modelos: Status
+  const statuses = [
+    { name: 'Nuevo' },
+    { name: 'Usado' }
+  ]
+
+  for (const status of statuses) {
+    await prisma.status.upsert({
+      where: { name: status.name },
+      update: {},
+      create: status,
+    })
+  }
+
+  // Nuevos modelos: PropertyType
+  const propertyTypes = [
+    { name: 'Departamento' },
+    { name: 'Casa' },
+    { name: 'Oficina' },
+    { name: 'Local comercial' },
+    { name: 'Bodega' },
+    { name: 'Terreno' },
+    { name: 'Estacionamiento' }
+  ]
+
+  for (const type of propertyTypes) {
+    await prisma.propertyType.upsert({
+      where: { name: type.name },
+      update: {},
+      create: type,
+    })
+  }
 
   console.log('Base de datos poblada con éxito')
 }

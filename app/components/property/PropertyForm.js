@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ProtectedRoute from '../auth/ProtectedRoute';
 import '../auth/Logintabs.css'
 import './PropertyForm.css'
@@ -7,14 +7,38 @@ import LogoutButton from '../auth/LogoutButton'
 
 export default function PropertyForm() {
   const [formData, setFormData] = useState({
-    status: '',
-    propertyType: '',
+    statusId: '',
+    propertyTypeId: '',
     bedrooms: 0,
     bathrooms: 0,
     surface: 0,
     terrace: 0,
     address: ''
   });
+  const [statuses, setStatuses] = useState([]);
+  const [propertyTypes, setPropertyTypes] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [statusResponse, typeResponse] = await Promise.all([
+          fetch('/api/properties?type=status'),
+          fetch('/api/properties?type=propertyType')
+        ]);
+
+        if (statusResponse.ok && typeResponse.ok) {
+          const statusData = await statusResponse.json();
+          const typeData = await typeResponse.json();
+          setStatuses(statusData);
+          setPropertyTypes(typeData);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -48,22 +72,36 @@ export default function PropertyForm() {
 
               <div className="propertyForm-group">
                 <label>Status</label>
-                <input 
-                  type="text" 
-                  name="status" 
-                  value={formData.status} 
-                  onChange={handleChange} 
-                  />
+                <select 
+                  name="statusId" 
+                  value={formData.statusId} 
+                  onChange={handleChange}
+                  className="propertyForm-select"
+                >
+                  <option value="">Seleccionar Status</option>
+                  {statuses.map(status => (
+                    <option key={status.id} value={status.id}>
+                      {status.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="propertyForm-group">
                 <label>Tipo de Inmueble</label>
-                <input 
-                  type="text" 
-                  name="propertyType" 
-                  value={formData.propertyType} 
-                  onChange={handleChange} 
-                  />
+                <select 
+                  name="propertyTypeId" 
+                  value={formData.propertyTypeId} 
+                  onChange={handleChange}
+                  className="propertyForm-select"
+                >
+                  <option value="">Seleccionar Tipo</option>
+                  {propertyTypes.map(type => (
+                    <option key={type.id} value={type.id}>
+                      {type.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="propertyForm-group">
