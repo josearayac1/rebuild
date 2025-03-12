@@ -120,7 +120,6 @@ export default function ProfessionalProfileForm({ user }) {
 
   return (
     <form className="login-form" onSubmit={handleSubmit}>
-      <h1>Completa tu Perfil</h1>
 
       <div className="form-group">
         <label>Foto de Perfil</label>

@@ -1,5 +1,6 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDropzone } from 'react-dropzone';
 import ProtectedRoute from '../auth/ProtectedRoute';
 import '../auth/Logintabs.css'
 import './PropertyForm.css'
@@ -17,6 +18,9 @@ export default function PropertyForm() {
   });
   const [statuses, setStatuses] = useState([]);
   const [propertyTypes, setPropertyTypes] = useState([]);
+  const [images, setImages] = useState([]);
+  const [imagesPreviews, setImagesPreviews] = useState([]);
+  const [uploadError, setUploadError] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,10 +48,71 @@ export default function PropertyForm() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const onDrop = useCallback((acceptedFiles) => {
+    if (images.length + acceptedFiles.length > 3) {
+      setUploadError('Solo puedes subir hasta 3 imágenes');
+      return;
+    }
+
+    const newPreviews = acceptedFiles.map(file => ({
+      file,
+      preview: URL.createObjectURL(file)
+    }));
+
+    setImagesPreviews(prev => [...prev, ...newPreviews]);
+    setImages(prev => [...prev, ...acceptedFiles]);
+    setUploadError('');
+  }, [images]);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      'image/*': ['.jpeg', '.jpg', '.png']
+    },
+    maxSize: 5242880,
+  });
+
+  useEffect(() => {
+    return () => {
+      imagesPreviews.forEach(preview => URL.revokeObjectURL(preview.preview));
+    };
+  }, [imagesPreviews]);
+
+  const removeImage = (index) => {
+    setImages(prev => prev.filter((_, i) => i !== index));
+    setImagesPreviews(prev => {
+      URL.revokeObjectURL(prev[index].preview);
+      return prev.filter((_, i) => i !== index);
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form data:', formData);
-    // Aquí se manejaría la lógica para enviar los datos al backend
+    
+    const formDataToSend = new FormData();
+    
+    Object.keys(formData).forEach(key => {
+      formDataToSend.append(key, formData[key]);
+    });
+
+    images.forEach((image, index) => {
+      formDataToSend.append(`images`, image);
+    });
+
+    try {
+      const response = await fetch('/api/properties', {
+        method: 'POST',
+        body: formDataToSend,
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al crear la propiedad');
+      }
+
+      const data = await response.json();
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (
@@ -154,9 +219,40 @@ export default function PropertyForm() {
                   />
               </div>
               
+              <div className="propertyForm-group">
+                <label>Fotografías de la Propiedad (Máximo 3)</label>
+                <div 
+                  {...getRootProps()} 
+                  className={`dropzone ${isDragActive ? 'active' : ''}`}
+                >
+                  <input {...getInputProps()} />
+                  {isDragActive ? (
+                    <p>Suelta las imágenes aquí...</p>
+                  ) : (
+                    <p>Arrastra y suelta imágenes aquí, o haz clic para seleccionar</p>
+                  )}
+                </div>
+                {uploadError && <p className="error-message">{uploadError}</p>}
+                
+                <div className="image-previews">
+                  {imagesPreviews.map((preview, index) => (
+                    <div key={index} className="preview-container">
+                      <img src={preview.preview} alt={`Preview ${index + 1}`} />
+                      <button 
+                        type="button" 
+                        onClick={() => removeImage(index)}
+                        className="remove-image"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <button type="submit" className="submitCreateProperty-button">
                 Crear Propiedad
-                </button>
+              </button>
             </form>
 
           </main>
