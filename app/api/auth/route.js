@@ -1,3 +1,0 @@
-// Login
-// Registro
-// Cerrar sesión 

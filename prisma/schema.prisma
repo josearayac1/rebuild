@@ -39,37 +39,41 @@ model Region {
   id          String    @id @default(cuid())
   name        String    @unique // Nombre de la región
   ordinal     String    // Número romano de la región
+
+  // Relaciones
   cities      City[]    // Relación con ciudades
   properties  Property[]
-  
-  // Perfiles relacionados
   ownerProfiles     OwnerProfile[]
   professionalProfiles ProfessionalProfile[]
+  inspections Inspection[] 
 }
 
 model City {
   id          String    @id @default(cuid())
   name        String    @unique // Nombre de la ciudad
+  
+  // Relaciones
   regionId    String
   region      Region    @relation(fields: [regionId], references: [id])
   communes    Commune[] // Relación con comunas
   properties  Property[]
-  
-  // Perfiles relacionados
   ownerProfiles     OwnerProfile[]
   professionalProfiles ProfessionalProfile[]
+  inspections Inspection[] 
 }
 
 model Commune {
   id          String    @id @default(cuid())
   name        String    @unique // Nombre de la comuna
+
+  
+  // Relaciones
   cityId      String
   city        City      @relation(fields: [cityId], references: [id])
   properties  Property[]
-  
-  // Perfiles relacionados
   ownerProfiles     OwnerProfile[]
   professionalProfiles ProfessionalProfile[]
+  inspections Inspection[]
 }
 
 model OwnerProfile {
@@ -79,9 +83,9 @@ model OwnerProfile {
   phone           String    
   address         String    
   company         String?   // Opcional
-  profilePicture   String?   // Nueva propiedad para la foto de perfil
+  profilePicture   String?   
   
-  // Ubicación
+  // Relaciones Ubicación
   region      Region    @relation(fields: [regionId], references: [id])
   regionId    String
   city        City      @relation(fields: [cityId], references: [id])
@@ -101,10 +105,10 @@ model ProfessionalProfile {
   profession      String    
   experience      Int       
   specialties     String[]  
-  profilePicture   String?   // Nueva propiedad para la foto de perfil
+  profilePicture   String?  
   
 
-  // Ubicación
+  // Relaciones Ubicación
   region      Region    @relation(fields: [regionId], references: [id])
   regionId    String
   city        City      @relation(fields: [cityId], references: [id])
@@ -119,55 +123,72 @@ model ProfessionalProfile {
 model Status {
   id         String    @id @default(cuid())
   name       String    @unique
-  properties Property[] 
+  properties Property[] // Relación Property
 }
 
 model PropertyType {
   id         String    @id @default(cuid())
   name       String    @unique
-  properties Property[] 
+  properties Property[] // Relación Property
 }
 
 model Property {
   id            Int          @id @default(autoincrement())
+  bedrooms      Int
+  bathrooms     Int
+  innerArea       Float // Cambiar a innerArea
+  terraceArea       Float? // Cambiar a terraceArea
+  address       String
+  estateCompany String // Agregar estateCompany (inmobiliaria)
+  estateProject String // Agregar estateProject (proyecto inmobiliario)
+  unitNumber    String // Agregar unitNumber (numero de unidad)
+
+  // Relaciones Status y PropertyType (Dropdown)
   statusId      String  
   status        Status  @relation(fields: [statusId], references: [id])
   propertyTypeId String  
   propertyType   PropertyType @relation(fields: [propertyTypeId], references: [id])
-  bedrooms      Int
-  bathrooms     Int
-  surface       Float
-  terrace       Float?
-  address       String
 
   // Relaciones
   ownerId       String
   owner         OwnerProfile @relation(fields: [ownerId], references: [id])
+  photos        PropertyPhoto[]
+  inspections   Inspection[]
+  
+  // Relaciones Ubicación
   communeId     String
   commune       Commune    @relation(fields: [communeId], references: [id])
   cityId        String
   city          City       @relation(fields: [cityId], references: [id])
   regionId      String
   region        Region     @relation(fields: [regionId], references: [id])
-  photos        PropertyPhoto[]
-  inspections   Inspection[]
 }
 
 model PropertyPhoto {
   id          Int      @id @default(autoincrement())
   url         String
+
+  // Relaciones
   propertyId  Int
   property    Property @relation(fields: [propertyId], references: [id])
 }
 
 model Inspection {
   id          String       @id @default(cuid())
+  status      Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+
+  // Relaciones
   property    Property     @relation(fields: [propertyId], references: [id])
   propertyId  Int          // Cambiado de String a Int para coincidir con el tipo de Property.id
   inspector   ProfessionalProfile @relation(fields: [inspectorId], references: [id])
   inspectorId String
-  status      String       // pending, completed, etc
-  needsBudget Boolean      @default(false)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+
+  // Relaciones Ubicación
+  communeId     String
+  commune       Commune    @relation(fields: [communeId], references: [id])
+  cityId        String
+  city          City       @relation(fields: [cityId], references: [id])
+  regionId      String
+  region        Region     @relation(fields: [regionId], references: [id])
 } 
