@@ -26,169 +26,248 @@ model User {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   
-  // Relaciones 1:1 con perfiles
+  // Relaciones 1:1 con tipos de perfiles
   ownerProfile    OwnerProfile?
   professionalProfile ProfessionalProfile?
+
+  // Relacion mantenedores
+  apus             Apu[]
   
   // Datos de recuperación de contraseña
-  resetToken      String?
-  resetTokenExpiry DateTime?
-}
-
-model Region {
-  id          String    @id @default(cuid())
-  name        String    @unique // Nombre de la región
-  ordinal     String    // Número romano de la región
-
-  // Relaciones
-  cities      City[]    // Relación con ciudades
-  properties  Property[]
-  ownerProfiles     OwnerProfile[]
-  professionalProfiles ProfessionalProfile[]
-  inspections Inspection[] 
-}
-
-model City {
-  id          String    @id @default(cuid())
-  name        String    @unique // Nombre de la ciudad
-  
-  // Relaciones
-  regionId    String
-  region      Region    @relation(fields: [regionId], references: [id])
-  communes    Commune[] // Relación con comunas
-  properties  Property[]
-  ownerProfiles     OwnerProfile[]
-  professionalProfiles ProfessionalProfile[]
-  inspections Inspection[] 
-}
-
-model Commune {
-  id          String    @id @default(cuid())
-  name        String    @unique // Nombre de la comuna
-
-  
-  // Relaciones
-  cityId      String
-  city        City      @relation(fields: [cityId], references: [id])
-  properties  Property[]
-  ownerProfiles     OwnerProfile[]
-  professionalProfiles ProfessionalProfile[]
-  inspections Inspection[]
+  resetToken        String?
+  resetTokenExpiry  DateTime?
 }
 
 model OwnerProfile {
   id              String    @id @default(cuid())
-  user            User      @relation(fields: [userId], references: [id])
-  userId          String    @unique
   phone           String    
   address         String    
-  company         String?   // Opcional
-  profilePicture   String?   
+  company         String?  
+  profilePicture  String?   
   
   // Relaciones Ubicación
-  region      Region    @relation(fields: [regionId], references: [id])
-  regionId    String
-  city        City      @relation(fields: [cityId], references: [id])
-  cityId      String
-  commune     Commune   @relation(fields: [communeId], references: [id])
-  communeId   String
+  region          Region    @relation(fields: [regionId], references: [id])
+  regionId        String
+  city            City      @relation(fields: [cityId], references: [id])
+  cityId          String
+  commune         Commune   @relation(fields: [communeId], references: [id])
+  communeId       String
   
   // Relaciones
-  properties  Property[]
+  user            User      @relation(fields: [userId], references: [id])
+  userId          String    @unique
+  properties      Property[]
 }
 
 model ProfessionalProfile {
   id              String    @id @default(cuid())
-  user            User      @relation(fields: [userId], references: [id])
-  userId          String    @unique
   phone           String    
   profession      String    
   experience      Int       
   specialties     String[]  
-  profilePicture   String?  
+  profilePicture  String?  
   
 
   // Relaciones Ubicación
-  region      Region    @relation(fields: [regionId], references: [id])
-  regionId    String
-  city        City      @relation(fields: [cityId], references: [id])
-  cityId      String
-  commune     Commune   @relation(fields: [communeId], references: [id])
-  communeId   String
+  region          Region    @relation(fields: [regionId], references: [id])
+  regionId        String
+  city            City      @relation(fields: [cityId], references: [id])
+  cityId          String
+  commune         Commune   @relation(fields: [communeId], references: [id])
+  communeId       String
   
   // Relaciones
-  inspections Inspection[]
+  user            User      @relation(fields: [userId], references: [id])
+  userId          String    @unique
+  inspections     Inspection[]
 }
 
-model Status {
-  id         String    @id @default(cuid())
-  name       String    @unique
-  properties Property[] // Relación Property
+model Region {
+  id              String    @id @default(cuid())
+  name            String    @unique // Nombre de la región
+  ordinal         String    // Número romano de la región
+
+  // Relaciones
+  cities          City[]    // Relación con ciudades
+  properties      Property[]
+  ownerProfiles   OwnerProfile[]
+  professionalProfiles      ProfessionalProfile[]
+  inspections     Inspection[]
 }
 
-model PropertyType {
-  id         String    @id @default(cuid())
-  name       String    @unique
-  properties Property[] // Relación Property
+model City {
+  id              String    @id @default(cuid())
+  name            String    @unique // Nombre de la ciudad
+  
+  // Relaciones
+  regionId        String
+  region          Region    @relation(fields: [regionId], references: [id])
+  communes        Commune[] // Relación con comunas
+  properties      Property[]
+  ownerProfiles   OwnerProfile[]
+  professionalProfiles      ProfessionalProfile[]
+  inspections     Inspection[] 
+}
+
+model Commune {
+  id              String    @id @default(cuid())
+  name            String    @unique // Nombre de la comuna
+
+  // Relaciones
+  cityId          String
+  city            City      @relation(fields: [cityId], references: [id])
+  properties      Property[]
+  ownerProfiles   OwnerProfile[]
+  professionalProfiles      ProfessionalProfile[]
+  inspections     Inspection[]
 }
 
 model Property {
-  id            Int          @id @default(autoincrement())
-  bedrooms      Int
-  bathrooms     Int
+  id              Int          @id @default(autoincrement())
+  bedrooms        Int
+  bathrooms       Int
   innerArea       Float // Cambiar a innerArea
-  terraceArea       Float? // Cambiar a terraceArea
-  address       String
-  estateCompany String // Agregar estateCompany (inmobiliaria)
-  estateProject String // Agregar estateProject (proyecto inmobiliario)
-  unitNumber    String // Agregar unitNumber (numero de unidad)
+  terraceArea     Float? // Cambiar a terraceArea
+  address         String
+  estateCompany   String // Agregar estateCompany (inmobiliaria)
+  estateProject   String // Agregar estateProject (proyecto inmobiliario)
+  unitNumber      String // Agregar unitNumber (numero de unidad)
 
   // Relaciones Status y PropertyType (Dropdown)
-  statusId      String  
-  status        Status  @relation(fields: [statusId], references: [id])
-  propertyTypeId String  
-  propertyType   PropertyType @relation(fields: [propertyTypeId], references: [id])
+  statusId        String  
+  status          Status  @relation(fields: [statusId], references: [id])
+  propertyTypeId  String  
+  propertyType    PropertyType @relation(fields: [propertyTypeId], references: [id])
 
   // Relaciones
-  ownerId       String
-  owner         OwnerProfile @relation(fields: [ownerId], references: [id])
-  photos        PropertyPhoto[]
-  inspections   Inspection[]
+  ownerId         String
+  owner           OwnerProfile @relation(fields: [ownerId], references: [id])
+  photos          PropertyPhoto[]
+  inspections     Inspection[]
   
   // Relaciones Ubicación
-  communeId     String
-  commune       Commune    @relation(fields: [communeId], references: [id])
-  cityId        String
-  city          City       @relation(fields: [cityId], references: [id])
-  regionId      String
-  region        Region     @relation(fields: [regionId], references: [id])
+  communeId       String
+  commune         Commune    @relation(fields: [communeId], references: [id])
+  cityId          String
+  city            City       @relation(fields: [cityId], references: [id])
+  regionId        String
+  region          Region     @relation(fields: [regionId], references: [id])
+}
+
+model Status {
+  id              String    @id @default(cuid())
+  name            String    @unique
+
+  properties      Property[] // Relación Property
+}
+
+model PropertyType {
+  id              String    @id @default(cuid())
+  name            String    @unique
+  properties      Property[] // Relación Property
 }
 
 model PropertyPhoto {
-  id          Int      @id @default(autoincrement())
-  url         String
+  id              Int      @id @default(autoincrement())
+  url             String
 
   // Relaciones
-  propertyId  Int
-  property    Property @relation(fields: [propertyId], references: [id])
+  propertyId      Int
+  property        Property @relation(fields: [propertyId], references: [id])
 }
 
 model Inspection {
-  id          String       @id @default(cuid())
-  status      Boolean      @default(false)
-  createdAt   DateTime     @default(now())
+  id              String       @id @default(cuid())
+  status          StatusInspection      
+  createdAt       DateTime     @default(now())
 
   // Relaciones
-  property    Property     @relation(fields: [propertyId], references: [id])
-  propertyId  Int          // Cambiado de String a Int para coincidir con el tipo de Property.id
-  inspector   ProfessionalProfile @relation(fields: [inspectorId], references: [id])
-  inspectorId String
+  property        Property     @relation(fields: [propertyId], references: [id])
+  propertyId      Int          
+  inspector       ProfessionalProfile             @relation(fields: [inspectorId], references: [id])
+  inspectorId     String
+  inspectionReport             InspectionReport?
 
   // Relaciones Ubicación
-  communeId     String
-  commune       Commune    @relation(fields: [communeId], references: [id])
-  cityId        String
-  city          City       @relation(fields: [cityId], references: [id])
-  regionId      String
-  region        Region     @relation(fields: [regionId], references: [id])
-} 
+  communeId       String
+  commune         Commune       @relation(fields: [communeId], references: [id])
+  cityId          String
+  city            City          @relation(fields: [cityId], references: [id])
+  regionId        String
+  region          Region        @relation(fields: [regionId], references: [id])
+}
+
+enum StatusInspection {
+  SOLICITADO
+  PENDIENTE
+  FINALIZADO
+}
+
+model InspectionReport {
+  id              String        @id @default(cuid())
+  createdAt       DateTime      @default(now())
+  closeAt         DateTime      @updatedAt
+  ownerSignature  String
+
+  // Relaciones 
+  inspection      Inspection    @relation(fields: [inspectionId], references: [id])
+  inspectionId    String        @unique
+  items           Item[]
+}
+
+model Item {
+  id              String        @id @default(cuid())
+  photo           String?
+  description     String
+  amount          Float
+
+  // Relaciones
+  inspectionReport              InspectionReport     @relation(fields: [inspectionReportId], references: [id])
+  inspectionReportId            String
+  apu                           Apu?
+}
+
+model Apu {
+  id              String        @id @default(cuid())
+  name            String
+  total           Float
+
+  // Relaciones
+  item            Item      @relation(fields: [itemId], references: [id])
+  itemId          String    @unique
+  apuCategorys    ApuCategory[]
+  userId          String
+  user            User @relation(fields: [userId], references: [id])
+}
+
+model ApuCategory {
+  id              String        @id @default(cuid())
+  name            String
+
+  // Relaciones
+  apuDetails      ApuDetail[]
+  apuId           String
+  apu             Apu @relation(fields: [apuId], references: [id])    
+}
+
+model ApuDetail {
+  id              String        @id @default(cuid())
+  description     String
+  yield           Float
+  unitPrice       Float
+  subtotal        Float
+
+  // Relaciones
+  apuCategoryId   String
+  apuCategory     ApuCategory @relation(fields: [apuCategoryId], references: [id])
+  unitApuId       String
+  unitApu         UnitApu @relation(fields: [unitApuId], references: [id])
+}
+
+model UnitApu {
+  id              String        @id @default(cuid())
+  name            String
+
+  // Relaciones
+  apuDetails      ApuDetail[]  
+}
