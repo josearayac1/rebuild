@@ -12,12 +12,21 @@ export default function PropertyForm() {
     propertyTypeId: '',
     bedrooms: 0,
     bathrooms: 0,
-    surface: 0,
-    terrace: 0,
-    address: ''
+    innerArea: 0,
+    terraceArea: 0,
+    address: '',
+    estateCompany: '',
+    estateProject: '',
+    unitNumber: '',
+    regionId: '',
+    cityId: '',
+    communeId: ''
   });
   const [statuses, setStatuses] = useState([]);
   const [propertyTypes, setPropertyTypes] = useState([]);
+  const [regions, setRegions] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [communes, setCommunes] = useState([]);
   const [images, setImages] = useState([]);
   const [imagesPreviews, setImagesPreviews] = useState([]);
   const [uploadError, setUploadError] = useState('');
@@ -43,6 +52,43 @@ export default function PropertyForm() {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const fetchRegions = async () => {
+      const response = await fetch('/api/locations/regions');
+      const data = await response.json();
+      setRegions(data);
+    };
+    fetchRegions();
+  }, []);
+
+  useEffect(() => {
+    if (formData.regionId) {
+      const fetchCities = async () => {
+        const response = await fetch(`/api/locations/cities?regionId=${formData.regionId}`);
+        const data = await response.json();
+        setCities(data);
+      };
+      fetchCities();
+    } else {
+      setCities([]);
+      setFormData(prev => ({ ...prev, cityId: '', communeId: '' }));
+    }
+  }, [formData.regionId]);
+
+  useEffect(() => {
+    if (formData.cityId) {
+      const fetchCommunes = async () => {
+        const response = await fetch(`/api/locations/communes?cityId=${formData.cityId}`);
+        const data = await response.json();
+        setCommunes(data);
+      };
+      fetchCommunes();
+    } else {
+      setCommunes([]);
+      setFormData(prev => ({ ...prev, communeId: '' }));
+    }
+  }, [formData.cityId]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -193,8 +239,8 @@ export default function PropertyForm() {
                 <label>Superficie</label>
                 <input 
                   type="number" 
-                  name="surface" 
-                  value={formData.surface} 
+                  name="innerArea" 
+                  value={formData.innerArea} 
                   onChange={handleChange} 
                   />
               </div>
@@ -203,8 +249,8 @@ export default function PropertyForm() {
                 <label>Terraza (m2)</label>
                 <input 
                   type="number" 
-                  name="terrace" 
-                  value={formData.terrace} 
+                  name="terraceArea" 
+                  value={formData.terraceArea} 
                   onChange={handleChange} 
                   />
               </div>
@@ -218,7 +264,90 @@ export default function PropertyForm() {
                   onChange={handleChange} 
                   />
               </div>
-              
+
+              <div className="propertyForm-group">
+                <label>Inmobiliaria</label>
+                <input 
+                  type="text" 
+                  name="estateCompany" 
+                  value={formData.estateCompany} 
+                  onChange={handleChange} 
+                  />
+              </div>
+
+              <div className="propertyForm-group">
+                <label>Proyecto Inmobiliario</label>
+                <input 
+                  type="text" 
+                  name="estateProject" 
+                  value={formData.estateProject} 
+                  onChange={handleChange} 
+                  />
+              </div>
+
+              <div className="propertyForm-group">
+                <label>Numero de unidad</label>
+                <input 
+                  type="text" 
+                  name="unitNumber" 
+                  value={formData.unitNumber} 
+                  onChange={handleChange} 
+                  />
+              </div>
+
+              <div className="propertyForm-group">
+                <label>Región</label>
+                <select
+                  name="regionId"
+                  value={formData.regionId}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Selecciona una región</option>
+                  {regions.map(region => (
+                    <option key={region.id} value={region.id}>
+                      {region.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="propertyForm-group">
+                <label>Ciudad</label>
+                <select
+                  name="cityId"
+                  value={formData.cityId}
+                  onChange={handleChange}
+                  required
+                  disabled={!formData.regionId}
+                >
+                  <option value="">Selecciona una ciudad</option>
+                  {cities.map(city => (
+                    <option key={city.id} value={city.id}>
+                      {city.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="propertyForm-group">
+                <label>Comuna</label>
+                <select
+                  name="communeId"
+                  value={formData.communeId}
+                  onChange={handleChange}
+                  required
+                  disabled={!formData.cityId}
+                >
+                  <option value="">Selecciona una comuna</option>
+                  {communes.map(commune => (
+                    <option key={commune.id} value={commune.id}>
+                      {commune.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div className="propertyForm-group">
                 <label>Fotografías de la Propiedad (Máximo 3)</label>
                 <div 

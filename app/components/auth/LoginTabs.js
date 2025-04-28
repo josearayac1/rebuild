@@ -4,7 +4,6 @@ import './LoginTabs.css'
 import { useRouter } from 'next/navigation'
 
 export default function LoginTabs() {
-  const [activeTab, setActiveTab] = useState('propietario')
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -28,23 +27,17 @@ export default function LoginTabs() {
     setLoading(true)
 
     try {
-      console.log('Intentando login con:', {
-        email: formData.email,
-        userType: activeTab === 'propietario' ? 'OWNER' : 'PROFESSIONAL'
-      })
-
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
-          userType: activeTab === 'propietario' ? 'OWNER' : 'PROFESSIONAL'
+          userType: 'OWNER'
         })
       })
 
       const data = await response.json()
-      console.log('Respuesta del servidor:', data)
 
       if (!response.ok) {
         throw new Error(data.error)
@@ -53,19 +46,11 @@ export default function LoginTabs() {
       if (!data.user.profileCompleted) {
         router.replace('/profile/setup')
       } else {
-        router.replace(data.user.userType === 'OWNER' ? '/owner' : '/profesional')
+        router.replace('/owner')
       }
 
     } catch (error) {
-      console.error('Error en login:', error)
       setError(error.message)
-      
-      // Si el error menciona el tipo de usuario, cambiar automáticamente a la pestaña correcta
-      if (error.message.includes('Propietario')) {
-        setActiveTab('propietario')
-      } else if (error.message.includes('Profesional')) {
-        setActiveTab('profesional')
-      }
     } finally {
       setLoading(false)
     }
@@ -84,21 +69,15 @@ export default function LoginTabs() {
         {/* Título */}
         <h1 className="title">¡Bienvenido!</h1>
 
-        {/* Tabs */}
-        <div className="tabs">
+        {/* Solo pestaña propietario */}
+        {/* <div className="tabs">
           <button
-            className={`tab ${activeTab === 'propietario' ? 'active' : ''}`}
-            onClick={() => setActiveTab('propietario')}
+            className="tab active"
+            disabled
           >
             Propietario
           </button>
-          <button
-            className={`tab ${activeTab === 'profesional' ? 'active' : ''}`}
-            onClick={() => setActiveTab('profesional')}
-          >
-            Profesional
-          </button>
-        </div>
+        </div> */}
 
         {/* Formulario actualizado */}
         <form className="login-form" onSubmit={handleSubmit}>

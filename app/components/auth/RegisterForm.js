@@ -91,7 +91,7 @@ export default function RegisterForm() {
           name: formData.name,
           email: formData.email,
           password: formData.password,
-          userType: formData.userType
+          userType: 'propietario'
         }),
       })
 
@@ -117,24 +117,18 @@ export default function RegisterForm() {
         {/* Logo pequeño y título */}
         <div className="register-header">
           <img src="/logo.png" alt="Logo" className="small-logo" />
-          <h1 className="title">Crear Cuenta</h1>
+          <h1 className="title">Crea tu Cuenta</h1>
         </div>
 
-        {/* Tabs */}
+        {/* Solo pestaña propietario 
         <div className="tabs">
           <button
-            className={`tab ${formData.userType === 'propietario' ? 'active' : ''}`}
-            onClick={() => setFormData({ ...formData, userType: 'propietario' })}
+            className="tab active"
+            disabled
           >
             Propietario
           </button>
-          <button
-            className={`tab ${formData.userType === 'profesional' ? 'active' : ''}`}
-            onClick={() => setFormData({ ...formData, userType: 'profesional' })}
-          >
-            Profesional
-          </button>
-        </div>
+        </div> */}
 
         {/* Formulario */}
         <form className="login-form" onSubmit={handleSubmit}>
