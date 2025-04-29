@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { validateRegisterForm } from '../../utils/validations'
 import './LoginTabs.css'  // Reutilizamos los estilos base
+import Snackbar from '../common/Snackbar'
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -22,6 +23,8 @@ export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [emailError, setEmailError] = useState('')
+  const [snackbarOpen, setSnackbarOpen] = useState(false)
+  const [snackbarMsg, setSnackbarMsg] = useState('')
 
   // Validar contraseña en tiempo real
   useEffect(() => {
@@ -101,8 +104,13 @@ export default function RegisterForm() {
         throw new Error(data.error || 'Error al registrar usuario')
       }
 
-      // Registro exitoso - redirigir al login
-      window.location.href = '/'
+      // Registro exitoso - mostrar snackbar y redirigir
+      setSnackbarMsg('Creación de usuario completada');
+      setSnackbarOpen(true);
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 2000);
+      return;
 
     } catch (error) {
       setErrors({ submit: error.message })
@@ -235,6 +243,12 @@ export default function RegisterForm() {
           </div>
         </div>
       </div>
+      <Snackbar
+        message={snackbarMsg}
+        open={snackbarOpen}
+        onClose={() => setSnackbarOpen(false)}
+        duration={2000}
+      />
     </div>
   )
 } 

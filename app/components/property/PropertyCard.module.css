@@ -1,0 +1,56 @@
+.card {
+  display: flex;
+  align-items: stretch;
+  background: #fff;
+  border: 2px solid #ffa500;
+  border-radius: 8px;
+  padding: 20px 32px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  min-height: 120px;
+  width: 90%;
+  max-width: none;
+  gap: 32px;
+}
+
+.imageWrapper {
+  flex: 0 0 140px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0;
+}
+
+.image {
+  width: 140px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #eee;
+}
+
+.infoCol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+
+.bold {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.comuna {
+  color: #333;
+  font-weight: 500;
+}
+
+.id {
+  color: #FFA500;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-top: 8px;
+} 

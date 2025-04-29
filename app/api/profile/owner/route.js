@@ -34,7 +34,7 @@ export async function POST(request) {
 
     if (profilePicture && profilePicture.size > 0) {
       try {
-        profilePictureUrl = await uploadImage(profilePicture)
+        profilePictureUrl = await uploadImage(profilePicture, 'profiles')
       } catch (error) {
         console.error('Error al subir la imagen:', error)
         return NextResponse.json({ error: 'Error al subir la imagen' }, { status: 500 })

@@ -21,7 +21,13 @@ export async function GET() {
       where: { id: payload.id },
       include: {
         professionalProfile: true,
-        ownerProfile: true
+        ownerProfile: {
+          include: {
+            region: true,
+            city: true,
+            commune: true
+          }
+        }
       }
     })
 

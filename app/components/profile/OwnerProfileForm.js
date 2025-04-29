@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Snackbar from '../common/Snackbar'
 
 export default function OwnerProfileForm({ user }) {
   const router = useRouter()
@@ -9,6 +10,8 @@ export default function OwnerProfileForm({ user }) {
   const [regions, setRegions] = useState([])
   const [cities, setCities] = useState([])
   const [communes, setCommunes] = useState([])
+  const [snackbarOpen, setSnackbarOpen] = useState(false)
+  const [snackbarMsg, setSnackbarMsg] = useState('')
   
   const [formData, setFormData] = useState({
     phone: '',
@@ -94,7 +97,14 @@ export default function OwnerProfileForm({ user }) {
         throw new Error(data.error)
       }
 
-      router.replace('/owner/')
+      // Perfil creado exitosamente - mostrar snackbar y redirigir después de 2 segundos
+      setSnackbarMsg('Perfil creado exitosamente');
+      setSnackbarOpen(true);
+      setTimeout(() => {
+        router.replace('/owner/');
+      }, 2000);
+      return;
+
     } catch (error) {
       setError(error.message)
     } finally {
@@ -103,105 +113,112 @@ export default function OwnerProfileForm({ user }) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      
-      <div className="form-group">
-        <label>Foto de Perfil</label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange}
-        />
-      </div>
+    <>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>Foto de Perfil</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+          />
+        </div>
 
-      <div className="form-group">
-        <label>Teléfono</label>
-        <input
-          type="tel"
-          value={formData.phone}
-          onChange={(e) => setFormData({...formData, phone: e.target.value})}
-          required
-        />
-      </div>
+        <div className="form-group">
+          <label>Teléfono</label>
+          <input
+            type="tel"
+            value={formData.phone}
+            onChange={(e) => setFormData({...formData, phone: e.target.value})}
+            required
+          />
+        </div>
 
-      <div className="form-group">
-        <label>Dirección</label>
-        <input
-          type="text"
-          value={formData.address}
-          onChange={(e) => setFormData({...formData, address: e.target.value})}
-          required
-        />
-      </div>
+        <div className="form-group">
+          <label>Dirección</label>
+          <input
+            type="text"
+            value={formData.address}
+            onChange={(e) => setFormData({...formData, address: e.target.value})}
+            required
+          />
+        </div>
 
-      <div className="form-group">
-        <label>Empresa (opcional)</label>
-        <input
-          type="text"
-          value={formData.company}
-          onChange={(e) => setFormData({...formData, company: e.target.value})}
-        />
-      </div>
+        <div className="form-group">
+          <label>Empresa (opcional)</label>
+          <input
+            type="text"
+            value={formData.company}
+            onChange={(e) => setFormData({...formData, company: e.target.value})}
+          />
+        </div>
 
-      <div className="form-group">
-        <label>Región</label>
-        <select
-          value={formData.regionId}
-          onChange={(e) => setFormData({...formData, regionId: e.target.value, cityId: '', communeId: ''})}
-          required
+        <div className="form-group">
+          <label>Región</label>
+          <select
+            value={formData.regionId}
+            onChange={(e) => setFormData({...formData, regionId: e.target.value, cityId: '', communeId: ''})}
+            required
+          >
+            <option value="">Selecciona una región</option>
+            {regions.map(region => (
+              <option key={region.id} value={region.id}>
+                {region.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label>Ciudad</label>
+          <select
+            value={formData.cityId}
+            onChange={(e) => setFormData({...formData, cityId: e.target.value, communeId: ''})}
+            required
+            disabled={!formData.regionId}
+          >
+            <option value="">Selecciona una ciudad</option>
+            {cities.map(city => (
+              <option key={city.id} value={city.id}>
+                {city.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label>Comuna</label>
+          <select
+            value={formData.communeId}
+            onChange={(e) => setFormData({...formData, communeId: e.target.value})}
+            required
+            disabled={!formData.cityId}
+          >
+            <option value="">Selecciona una comuna</option>
+            {communes.map(commune => (
+              <option key={commune.id} value={commune.id}>
+                {commune.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {error && <span className="error-message">{error}</span>}
+        
+        <button 
+          type="submit" 
+          className="submit-button"
+          disabled={loading}
         >
-          <option value="">Selecciona una región</option>
-          {regions.map(region => (
-            <option key={region.id} value={region.id}>
-              {region.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="form-group">
-        <label>Ciudad</label>
-        <select
-          value={formData.cityId}
-          onChange={(e) => setFormData({...formData, cityId: e.target.value, communeId: ''})}
-          required
-          disabled={!formData.regionId}
-        >
-          <option value="">Selecciona una ciudad</option>
-          {cities.map(city => (
-            <option key={city.id} value={city.id}>
-              {city.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="form-group">
-        <label>Comuna</label>
-        <select
-          value={formData.communeId}
-          onChange={(e) => setFormData({...formData, communeId: e.target.value})}
-          required
-          disabled={!formData.cityId}
-        >
-          <option value="">Selecciona una comuna</option>
-          {communes.map(commune => (
-            <option key={commune.id} value={commune.id}>
-              {commune.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {error && <span className="error-message">{error}</span>}
-      
-      <button 
-        type="submit" 
-        className="submit-button"
-        disabled={loading}
-      >
-        {loading ? 'Guardando...' : 'Guardar Perfil'}
-      </button>
-    </form>
+          {loading ? 'Guardando...' : 'Guardar Perfil'}
+        </button>
+      </form>
+      <Snackbar
+        message={snackbarMsg}
+        open={snackbarOpen}
+        onClose={() => setSnackbarOpen(false)}
+        duration={2000}
+      />
+    </>
   )
 } 

@@ -3,24 +3,29 @@ import { v2 as cloudinary } from 'cloudinary';
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export const uploadImage = async (file) => {
-  try {
-    // Convertir el archivo a base64
-    const fileBuffer = await file.arrayBuffer();
-    const base64String = Buffer.from(fileBuffer).toString('base64');
-    const dataURI = `data:${file.type};base64,${base64String}`;
-    
-    // Subir a Cloudinary
-    const result = await cloudinary.uploader.upload(dataURI, {
-      resource_type: 'auto',
-    });
-    
-    return result.secure_url;
-  } catch (error) {
-    console.error('Error al subir imagen:', error);
-    throw error;
-  }
-};
+/**
+ * Sube una imagen a Cloudinary usando streams.
+ * @param {File|Blob} file - Archivo de imagen recibido (por ejemplo, desde un formulario).
+ * @param {string} [folder='properties'] - Carpeta de Cloudinary donde se guardará la imagen ('properties' o 'profiles').
+ * @returns {Promise<string>} URL segura de la imagen subida.
+ */
+export async function uploadImage(file, folder = 'properties') {
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.upload_stream(
+      {
+        resource_type: 'image',
+        folder,
+      },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result.secure_url);
+      }
+    ).end(buffer);
+  });
+}

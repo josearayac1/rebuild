@@ -32,10 +32,44 @@ export async function GET(request) {
         headers: { 'Content-Type': 'application/json' }
       });
     }
-    return new Response(JSON.stringify({ error: 'Invalid type parameter' }), { 
-      status: 400,
+
+    // Si no hay 'type', devolver propiedades del propietario autenticado
+    const token = cookies().get('auth-token');
+    if (!token) {
+      return new Response(JSON.stringify({ error: 'No autorizado' }), { status: 401 });
+    }
+    const payload = verifyToken(token.value);
+    if (!payload || payload.userType !== 'OWNER') {
+      return new Response(JSON.stringify({ error: 'No autorizado' }), { status: 401 });
+    }
+
+    // Buscar el OwnerProfile asociado al usuario autenticado
+    const ownerProfile = await prisma.ownerProfile.findUnique({
+      where: { userId: payload.id }
+    });
+    if (!ownerProfile) {
+      return new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }
+
+    // Buscar propiedades del propietario
+    const properties = await prisma.property.findMany({
+      where: { ownerId: ownerProfile.id },
+      include: {
+        photos: true,
+        status: true,
+        propertyType: true,
+        commune: true,
+        region: true,
+        city: true
+      },
+      orderBy: { id: 'desc' }
+    });
+
+    return new Response(JSON.stringify(properties), {
+      status: 200,
       headers: { 'Content-Type': 'application/json' }
     });
+
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), { 
       status: 500,

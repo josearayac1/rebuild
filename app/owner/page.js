@@ -2,14 +2,16 @@
 import { useState, useEffect } from 'react'
 import ProtectedRoute from '../components/auth/ProtectedRoute'
 import '../components/auth/LoginTabs.css'
-import SearchBar from '../components/dashboard/SearchBar'
 import LogoutButton from '../components/auth/LogoutButton'
 import { useRouter } from 'next/navigation'
+import PropertyCard from '../components/property/PropertyCard'
 
 export default function OwnerDashboard() {
   const [user, setUser] = useState(null)
   const [ownerData, setOwnerData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [properties, setProperties] = useState([])
+  const [loadingProperties, setLoadingProperties] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
@@ -20,6 +22,7 @@ export default function OwnerDashboard() {
           const data = await response.json()
           setUser(data.user)
           fetchOwnerData(data.user.id);
+          fetchProperties();
         }
       } catch (error) {
         console.error('Error checking auth:', error)
@@ -37,6 +40,21 @@ export default function OwnerDashboard() {
         }
       } catch (error) {
         console.error('Error fetching owner data:', error)
+      }
+    }
+
+    const fetchProperties = async () => {
+      try {
+        setLoadingProperties(true)
+        const response = await fetch('/api/properties')
+        if (response.ok) {
+          const data = await response.json()
+          setProperties(data)
+        }
+      } catch (error) {
+        console.error('Error fetching properties:', error)
+      } finally {
+        setLoadingProperties(false)
       }
     }
 
@@ -70,30 +88,37 @@ export default function OwnerDashboard() {
           <main className="dashboard-content">
             {/* Columna izquierda */}
             <div className="visits-section">
-              <SearchBar />
-              <h2>Propiedades</h2>
-              <button
-                onClick={handleCreateProperty}
-                style={{
-                  float: 'right',
-                  marginRight: '20px',
-                  backgroundColor: '#f0ad4e',
-                  border: 'none',
-                  color: 'white',
-                  padding: '10px 20px',
-                  textAlign: 'center',
-                  textDecoration: 'none',
-                  display: 'inline-block',
-                  fontSize: '16px',
-                  borderRadius: '5px',
-                  cursor: 'pointer',
-                  width: '200px'
-                }}
-              >
-                Crear Propiedad
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <h2 style={{ margin: 0 }}>Propiedades</h2>
+                <button
+                  onClick={handleCreateProperty}
+                  style={{
+                    backgroundColor: '#f0ad4e',
+                    border: 'none',
+                    color: 'white',
+                    padding: '10px 20px',
+                    textAlign: 'center',
+                    textDecoration: 'none',
+                    display: 'inline-block',
+                    fontSize: '16px',
+                    borderRadius: '5px',
+                    cursor: 'pointer',
+                    width: '200px'
+                  }}
+                >
+                  Crear Propiedad
+                </button>
+              </div>
               <div className="visits-container">
-                {/* Aquí irán las tarjetas de propiedades */}
+                {loadingProperties ? (
+                  <p style={{ color: '#888', marginTop: 32 }}>Cargando propiedades...</p>
+                ) : properties.length === 0 ? (
+                  <p style={{ color: '#888', marginTop: 32 }}>No tienes propiedades ingresadas aún.</p>
+                ) : (
+                  properties.map(property => (
+                    <PropertyCard key={property.id} property={property} />
+                  ))
+                )}
               </div>
             </div>
 
@@ -122,7 +147,7 @@ export default function OwnerDashboard() {
                     <div className="profile-field">
                       <span className="profile-field-label">Región</span>
                       <span className="profile-field-value">
-                        {user?.ownerProfile?.regionName}
+                        {user?.ownerProfile?.region?.name}
                       </span>
                     </div>
                     <div className="profile-field">

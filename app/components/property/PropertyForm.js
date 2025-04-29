@@ -5,6 +5,8 @@ import ProtectedRoute from '../auth/ProtectedRoute';
 import '../auth/Logintabs.css'
 import './PropertyForm.css'
 import LogoutButton from '../auth/LogoutButton'
+import Snackbar from '../common/Snackbar';
+import { useRouter } from 'next/navigation';
 
 export default function PropertyForm() {
   const [formData, setFormData] = useState({
@@ -30,6 +32,9 @@ export default function PropertyForm() {
   const [images, setImages] = useState([]);
   const [imagesPreviews, setImagesPreviews] = useState([]);
   const [uploadError, setUploadError] = useState('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState('');
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -155,7 +160,14 @@ export default function PropertyForm() {
         throw new Error('Error al crear la propiedad');
       }
 
-      const data = await response.json();
+      setSnackbarMsg('Propiedad creada exitosamente');
+      setSnackbarOpen(true);
+      setTimeout(() => {
+        setSnackbarOpen(false);
+        window.location.href = '/owner';
+      }, 2000);
+      return;
+
     } catch (error) {
       console.error('Error:', error);
     }
@@ -386,6 +398,12 @@ export default function PropertyForm() {
 
           </main>
           
+          <Snackbar
+            message={snackbarMsg}
+            open={snackbarOpen}
+            onClose={() => setSnackbarOpen(false)}
+            duration={2000}
+          />
         </div>
     </div>
     </ProtectedRoute>
