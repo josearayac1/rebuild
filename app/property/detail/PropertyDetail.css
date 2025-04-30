@@ -1,0 +1,242 @@
+.detailPage-container {
+  min-height: 100vh;
+  height: 100vh;
+  width: 100%;
+  background-color: #FFA500;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  overflow: hidden;
+}
+
+.detail-card {
+  background: #fff;
+  padding: 2.5rem 3rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.10);
+  height: 90%;
+  width: 90%;
+  margin: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-height: calc(95vh - 4rem);
+  box-sizing: border-box;
+  justify-content: space-between;
+}
+
+body {
+  overflow: hidden;
+}
+
+.logo-wrapper {
+  background-color: #FFA500;
+  padding: 1rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  min-height: 80px;
+  margin-right: 0;
+  justify-self: start;
+}
+
+.logo {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.logo-title-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  align-items: center;
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.property-title {
+  justify-self: center;
+  align-items: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.property-title h2 {
+  font-weight: 700;
+  font-size: 2rem;
+  margin: 0;
+}
+
+.project-name {
+  font-size: 1.1rem;
+  margin-top: 4px;
+}
+
+.property-photos-details {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin-bottom: 32px;
+  gap: 32px;
+}
+
+.property-photos {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex: 1;
+}
+
+.property-photo {
+  width: 210px;
+  height: 135px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.property-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 200px;
+  margin-left: 32px;
+}
+
+.edit-button {
+  background: #FFA500;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 24px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  margin-top: -30px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.edit-button:hover {
+  background: #FF9000;
+}
+
+.edit-icon {
+  font-size: 18px;
+}
+
+.inspection-status {
+  font-weight: 600;
+  margin-top: 40px;
+  display: flex;
+  justify-self: end;
+  margin-left: 100px;
+  margin-right: -150px;
+}
+
+.inspection-status-value {
+  color: #E53935;
+}
+
+.property-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 200px;
+  margin: 0 48px 32px 48px;
+  justify-content: center;
+}
+
+.property-info-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.property-actions-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  margin-top: 32px;
+  width: 100%;
+  gap: 16px;
+}
+
+.history-button {
+  background: #FFA500;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 24px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  margin-top: -24px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  justify-self: start;
+}
+
+.history-button:hover {
+  background-color: #FF9000;
+}
+
+.request-inspection-button {
+  background: #FFA500;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 24px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  margin-top: -24px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  justify-self: end;
+}
+
+.request-inspection-button:hover {
+  background-color: #FF9000;
+}
+
+.loading-text {
+  text-align: center;
+  color: #666;
+  font-size: 1rem;
+  margin: 2rem 0;
+}
+
+.error-text {
+  text-align: center;
+  color: #666;
+  margin: 2rem 0;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.logout-button {
+  background: #FFA500;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  justify-self: end;
+  transition: background-color 0.3s;
+} 
+
+.logout-button:hover {
+  background-color: #FF9000;
+}
+

@@ -11,6 +11,12 @@
   width: 90%;
   max-width: none;
   gap: 32px;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 8px 32px 0 rgba(255, 144, 0, 0.25), 0 2px 8px rgba(0,0,0,0.10);
+  border-color: #ff9000;
 }
 
 .imageWrapper {

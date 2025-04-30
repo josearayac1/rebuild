@@ -15,9 +15,31 @@ const prisma = new PrismaClient();
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
+  const id = searchParams.get('id');
   const type = searchParams.get('type');
 
   try {
+    if (id) {
+      // Obtener una propiedad por ID (detalle)
+      const property = await prisma.property.findUnique({
+        where: { id: Number(id) },
+        include: {
+          photos: true,
+          status: true,
+          propertyType: true,
+          commune: true,
+          region: true,
+          city: true
+        }
+      });
+      if (!property) {
+        return new Response(JSON.stringify(null), { status: 404, headers: { 'Content-Type': 'application/json' } });
+      }
+      return new Response(JSON.stringify(property), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
     if (type === 'status') {
       const statuses = await prisma.status.findMany();
       return new Response(JSON.stringify(statuses), { 

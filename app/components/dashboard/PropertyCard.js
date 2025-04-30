@@ -1,6 +1,13 @@
+import { useRouter } from 'next/navigation';
+
 export default function PropertyCard({ property }) {
+  const router = useRouter();
+  const handleClick = () => {
+    router.push(`/property/detail?id=${property.id}`);
+    router.refresh();
+  };
   return (
-    <div className="property-card">
+    <div className="property-card" onClick={handleClick} style={{ cursor: 'pointer' }}>
       <div className="property-image">
         <img src={property.image} alt={property.name} />
       </div>

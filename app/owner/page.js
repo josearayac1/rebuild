@@ -88,23 +88,12 @@ export default function OwnerDashboard() {
           <main className="dashboard-content">
             {/* Columna izquierda */}
             <div className="visits-section">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+              <div className='property-title-container'>
                 <h2 style={{ margin: 0 }}>Propiedades</h2>
                 <button
+                  type='button'
+                  className='create-property-button'
                   onClick={handleCreateProperty}
-                  style={{
-                    backgroundColor: '#f0ad4e',
-                    border: 'none',
-                    color: 'white',
-                    padding: '10px 20px',
-                    textAlign: 'center',
-                    textDecoration: 'none',
-                    display: 'inline-block',
-                    fontSize: '16px',
-                    borderRadius: '5px',
-                    cursor: 'pointer',
-                    width: '200px'
-                  }}
                 >
                   Crear Propiedad
                 </button>

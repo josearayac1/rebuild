@@ -1,7 +1,9 @@
 import React from 'react';
 import styles from './PropertyCard.module.css';
+import { useRouter } from 'next/navigation';
 
 export default function PropertyCard({ property }) {
+  const router = useRouter();
   const mainPhoto = property.photos?.[0]?.url || '/placeholder-property.jpg';
   const dormitorios = property.bedrooms;
   const banos = property.bathrooms;
@@ -14,8 +16,12 @@ export default function PropertyCard({ property }) {
   const inmobiliaria = property.estateCompany || '';
   const id = property.id;
 
+  const handleClick = () => {
+    router.push(`/property/detail?id=${id}`);
+  };
+
   return (
-    <div className={styles.card}>
+    <div className={styles.card} onClick={handleClick} style={{ cursor: 'pointer' }}>
       {/* Columna 1: Imagen */}
       <div className={styles.imageWrapper}>
         <img src={mainPhoto} alt="Foto propiedad" className={styles.image} />
