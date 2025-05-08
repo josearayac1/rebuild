@@ -24,7 +24,7 @@
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 body {
@@ -90,7 +90,8 @@ body {
   display: flex;
   gap: 12px;
   justify-content: center;
-  flex: 1;
+  margin-bottom: 32px;
+  width: 100%;
 }
 
 .property-photo {
@@ -146,26 +147,31 @@ body {
 }
 
 .property-info-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 200px;
-  margin: 0 48px 32px 48px;
-  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  margin-top: 16px;
+  gap: 0;
+  width: 100%;
 }
 
 .property-info-column {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  align-items: flex-start;
+  width: 260px;
+  margin: 0 auto;
 }
 
 .property-actions-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  margin-top: 32px;
-  width: 100%;
-  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;   /* Alinea el texto a la izquierda */
+  width: 260px;              /* Ancho fijo para evitar sangrías dispares */
+  margin: 0 auto; 
 }
 
 .history-button {
@@ -194,16 +200,19 @@ body {
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 8px 24px;
+  padding: 8px 32px;
   font-weight: 500;
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
-  margin-top: -24px;
+  margin-bottom: 0;
+  margin-top: 8px;
   cursor: pointer;
   transition: background-color 0.3s;
   justify-self: end;
+  align-self: flex-end;
+  width: fit-content;
+  min-width: 160px;
 }
 
 .request-inspection-button:hover {
@@ -239,4 +248,37 @@ body {
 .logout-button:hover {
   background-color: #FF9000;
 }
+
+.inspection-content-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 96px;
+  margin: 0 auto;
+  max-width: 900px;
+  padding: 32px 0;
+  min-height: 350px;
+}
+
+.inspection-form {
+  flex: 1;
+  min-width: 320px;
+  max-width: 400px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.inspection-property-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0;
+}
+
 

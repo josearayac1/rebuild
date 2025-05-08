@@ -61,7 +61,12 @@ export default function PropertyDetail() {
               <span className="edit-icon">✏️</span> Editar
             </button>
             <span className="inspection-status">
-              ESTADO DE INSPECCIÓN: <span className="inspection-status-value">{property.status?.name?.toUpperCase() || 'PENDIENTE'}</span>
+              ESTADO DE INSPECCIÓN:{" "}
+              <span className="inspection-status-value">
+                {property.inspections && property.inspections.length > 0
+                  ? property.inspections[0].status
+                  : "SIN INSPECCIÓN"}
+              </span>
             </span>
           </div>
         </div>
@@ -87,7 +92,10 @@ export default function PropertyDetail() {
           <button className="history-button">
             <span className="history-icon">🕓</span> Historial de inspecciones
           </button>
-          <button className="request-inspection-button">
+          <button
+            className="request-inspection-button"
+            onClick={() => router.push(`/inspection?propertyId=${property.id}`)}
+          >
             Solicitar Inspección
           </button>
         </div>

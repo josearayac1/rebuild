@@ -372,7 +372,7 @@ body {
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin: 0 auto;
-  max-width: 1200px;
+  width: 80%;
   min-height: calc(100vh - 4rem);
   display: flex;
   flex-direction: column;
@@ -597,7 +597,7 @@ body {
 .profile-section {
   background: white;
   border-radius: 8px;
-  padding: 1.5rem;
+  padding: 2rem;
   border: 1px solid #e5e7eb;
   height: fit-content;
   min-width: 320px;
