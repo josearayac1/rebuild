@@ -42,6 +42,7 @@ body {
   min-height: 80px;
   margin-right: 0;
   justify-self: start;
+  cursor: pointer;
 }
 
 .logo {
@@ -159,7 +160,7 @@ body {
   gap: 10px;
 }
 
-.property-actions-row {
+.property-actions-row-detail {
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;

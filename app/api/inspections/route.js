@@ -63,4 +63,51 @@ export async function POST(request) {
     console.error('Error al solicitar inspección:', error);
     return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
   }
+}
+
+export async function GET(request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const propertyId = searchParams.get('propertyId');
+
+    if (!propertyId) {
+      return NextResponse.json({ error: 'Falta el propertyId' }, { status: 400 });
+    }
+
+    // Traer la propiedad y sus inspecciones
+    const property = await prisma.property.findUnique({
+      where: { id: Number(propertyId) },
+      include: {
+        propertyType: true,
+        inspections: {
+          orderBy: { visitDate: 'desc' },
+          include: {
+            inspectionReport: true
+          }
+        }
+      }
+    });
+
+    if (!property) {
+      return NextResponse.json({ error: 'Propiedad no encontrada' }, { status: 404 });
+    }
+
+    // Adjunta los datos de la propiedad a cada inspección para facilitar el frontend
+    const inspections = property.inspections.map(insp => ({
+      ...insp,
+      property: {
+        propertyType: property.propertyType,
+        bedrooms: property.bedrooms,
+        bathrooms: property.bathrooms,
+        estateProject: property.estateProject,
+        address: property.address
+      }
+    }));
+
+    return NextResponse.json({ inspections, property });
+
+  } catch (error) {
+    console.error('Error al obtener inspecciones:', error);
+    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
+  }
 } 
