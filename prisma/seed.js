@@ -3,23 +3,31 @@ const prisma = new PrismaClient()
 
 async function main() {
   // Región Metropolitana y sus ciudades/comunas
-  const metropolitana = await prisma.region.upsert({
-    where: { name: 'Metropolitana de Santiago' },
-    update: {},
-    create: {
-      name: 'Metropolitana de Santiago',
-      ordinal: 'XIII'
-    }
+  let metropolitana = await prisma.region.findFirst({
+    where: { name: 'Metropolitana de Santiago' }
   })
 
-  const santiago = await prisma.city.upsert({
-    where: { name: 'Santiago' },
-    update: { regionId: metropolitana.id },
-    create: {
-      name: 'Santiago',
-      regionId: metropolitana.id
-    }
+  if (!metropolitana) {
+    metropolitana = await prisma.region.create({
+      data: {
+        name: 'Metropolitana de Santiago',
+        ordinal: 'XIII'
+      }
+    })
+  }
+
+  let santiago = await prisma.city.findFirst({
+    where: { name: 'Santiago' }
   })
+
+  if (!santiago) {
+    santiago = await prisma.city.create({
+      data: {
+        name: 'Santiago',
+        regionId: metropolitana.id
+      }
+    })
+  }
 
   // Comunas de Santiago
   const comunasSantiago = [
@@ -28,31 +36,39 @@ async function main() {
   ]
 
   for (const comunaName of comunasSantiago) {
-    await prisma.commune.upsert({
-      where: { name: comunaName },
-      update: { cityId: santiago.id },
-      create: {
-        name: comunaName,
-        cityId: santiago.id
-      }
+    let comuna = await prisma.commune.findFirst({
+      where: { name: comunaName }
     })
+
+    if (!comuna) {
+      await prisma.commune.create({
+        data: {
+          name: comunaName,
+          cityId: santiago.id
+        }
+      })
+    }
   }
 
-  // Nuevos modelos: Status
+  // Status
   const statuses = [
     { name: 'Nuevo' },
     { name: 'Usado' }
   ]
 
   for (const status of statuses) {
-    await prisma.status.upsert({
-      where: { name: status.name },
-      update: {},
-      create: status,
+    let existingStatus = await prisma.status.findFirst({
+      where: { name: status.name }
     })
+
+    if (!existingStatus) {
+      await prisma.status.create({
+        data: status
+      })
+    }
   }
 
-  // Nuevos modelos: PropertyType
+  // PropertyType
   const propertyTypes = [
     { name: 'Departamento' },
     { name: 'Casa' },
@@ -64,11 +80,15 @@ async function main() {
   ]
 
   for (const type of propertyTypes) {
-    await prisma.propertyType.upsert({
-      where: { name: type.name },
-      update: {},
-      create: type,
+    let existingType = await prisma.propertyType.findFirst({
+      where: { name: type.name }
     })
+
+    if (!existingType) {
+      await prisma.propertyType.create({
+        data: type
+      })
+    }
   }
 
   console.log('Base de datos poblada con éxito')
