@@ -181,11 +181,15 @@ model Inspection {
   status          StatusInspection      
   createdAt       DateTime     @default(now())
 
+  // NUEVOS CAMPOS
+  visitDate       DateTime
+  instructions    String?
+
   // Relaciones
   property        Property     @relation(fields: [propertyId], references: [id])
   propertyId      Int          
-  inspector       ProfessionalProfile             @relation(fields: [inspectorId], references: [id])
-  inspectorId     String
+  inspector       ProfessionalProfile?            @relation(fields: [inspectorId], references: [id])
+  inspectorId     String?
   inspectionReport             InspectionReport?
 
   // Relaciones Ubicación
