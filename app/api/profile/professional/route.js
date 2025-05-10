@@ -23,7 +23,7 @@ export async function POST(request) {
     }
 
     const formData = await request.formData()
-    
+
     // Verificar que los datos se están recibiendo correctamente
     console.log('Datos recibidos:', formData)
 
@@ -34,7 +34,7 @@ export async function POST(request) {
 
     if (profilePicture && profilePicture.size > 0) {
       try {
-        profilePictureUrl = await uploadImage(profilePicture)
+        profilePictureUrl = await uploadImage(profilePicture, 'profiles')
       } catch (error) {
         console.error('Error al subir la imagen:', error)
         return NextResponse.json({ error: 'Error al subir la imagen' }, { status: 500 })
@@ -75,5 +75,84 @@ export async function POST(request) {
       { error: 'Error al crear perfil' },
       { status: 500 }
     )
+  }
+}
+
+export async function GET() {
+  try {
+    const token = cookies().get('auth-token');
+    if (!token) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+
+    const payload = verifyToken(token.value);
+    if (!payload) {
+      return NextResponse.json({ error: 'Token inválido' }, { status: 401 });
+    }
+
+    // Buscar el perfil profesional del usuario autenticado
+    const profile = await prisma.professionalProfile.findUnique({
+      where: { userId: payload.id },
+      include: {
+        user: {
+          select: {
+            name: true,
+            userType: true,
+            email: true,
+          }
+        }
+      }
+    });
+
+    if (!profile) {
+      return NextResponse.json({ error: 'Perfil profesional no encontrado' }, { status: 404 });
+    }
+
+    return NextResponse.json(profile);
+
+  } catch (error) {
+    console.error('Error al obtener perfil:', error);
+    return NextResponse.json({ error: 'Error al obtener perfil' }, { status: 500 });
+  }
+}
+
+export async function PATCH(request) {
+  try {
+    const token = cookies().get('auth-token');
+    if (!token) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+    const payload = verifyToken(token.value);
+    if (!payload) {
+      return NextResponse.json({ error: 'Token inválido' }, { status: 401 });
+    }
+
+    const body = await request.json();
+
+    // Actualiza los campos que recibes en el body
+    const updatedProfile = await prisma.professionalProfile.update({
+      where: { userId: payload.id },
+      data: {
+        phone: body.phone,
+        profession: body.profession,
+        regionId: body.regionId,
+        cityId: body.cityId,
+        communeId: body.communeId,
+        // Agrega más campos si lo necesitas
+      }
+    });
+
+    // Si quieres actualizar el email del usuario:
+    if (body.user && body.user.email) {
+      await prisma.user.update({
+        where: { id: payload.id },
+        data: { email: body.user.email }
+      });
+    }
+
+    return NextResponse.json(updatedProfile);
+  } catch (error) {
+    console.error('Error al actualizar perfil:', error);
+    return NextResponse.json({ error: 'Error al actualizar perfil' }, { status: 500 });
   }
 } 
