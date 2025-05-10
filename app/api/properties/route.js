@@ -29,7 +29,11 @@ export async function GET(request) {
           propertyType: true,
           commune: true,
           region: true,
-          city: true
+          city: true,
+          inspections: {
+            orderBy: { createdAt: 'desc' },
+            take: 1 // Solo la inspección más reciente
+          }
         }
       });
       if (!property) {

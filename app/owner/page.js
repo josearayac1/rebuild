@@ -75,7 +75,7 @@ export default function OwnerDashboard() {
         <div className="dashboard-content-wrapper">
           <nav className="dashboard-nav">
             <div className="nav-left">
-              <div className="logo-wrapper">
+              <div className="logo-wrapper" onClick={() => router.push("/owner")}>
                 <img src="/logo.png" alt="Logo" className="logo" />
               </div>
               <h1 className="nav-title">Propietario</h1>
@@ -85,7 +85,7 @@ export default function OwnerDashboard() {
             </div>
           </nav>
           
-          <main className="dashboard-content">
+          <main className="dashboard-content-home">
             {/* Columna izquierda */}
             <div className="visits-section">
               <div className='property-title-container'>
@@ -113,9 +113,12 @@ export default function OwnerDashboard() {
 
             {/* Columna derecha */}
             <div className="profile-section">
-              <div className="profile-header">
+              <div className="profile-content-row">
                 <div className="profile-info">
-                  <h2 className="profile-title">Datos del Propietario</h2>
+                  <div className="profile-header-row">
+                    <h2 className="profile-title">Datos del Propietario</h2>
+                    <button className="edit-profile-button">Editar</button>
+                  </div>
                   <div className="profile-data">
                     <div className="profile-field">
                       <span className="profile-field-label">Nombre</span>
@@ -154,13 +157,7 @@ export default function OwnerDashboard() {
                   </div>
                 </div>
                 <div className="profile-picture-container">
-                  {user?.ownerProfile?.profilePicture && (
-                    <img 
-                      src={user?.ownerProfile?.profilePicture} 
-                      alt="Foto de Perfil" 
-                      className="profile-picture" 
-                    />
-                  )}
+                  <img src={user?.ownerProfile?.profilePicture} alt="Foto de Perfil" className="profile-picture" />
                 </div>
               </div>
             </div>
