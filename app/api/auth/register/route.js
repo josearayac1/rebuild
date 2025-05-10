@@ -10,20 +10,28 @@ const validatePassword = (password) => {
 
 export async function POST(request) {
   try {
-    // Asegurarnos de que podemos leer el body
+    // Asegurarse de que se puede leer el body
     if (!request.body) {
       return NextResponse.json({ error: 'No se recibieron datos' }, { status: 400 })
     }
 
     const { name, email, password, userType } = await request.json()
 
-    // Log para debugging
     console.log('Datos recibidos:', { name, email, userType })
 
-    // Validar datos
-    if (!name || !email || !password) {
+    // Validar campos requeridos
+    if (!name || !email || !password || !userType) {
       return NextResponse.json(
         { error: 'Faltan campos requeridos' },
+        { status: 400 }
+      )
+    }
+
+    // Validar tipo de usuario
+    const normalizedUserType = userType.toLowerCase()
+    if (normalizedUserType !== 'propietario' && normalizedUserType !== 'profesional') {
+      return NextResponse.json(
+        { error: 'Tipo de usuario inválido. Debe ser "propietario" o "profesional"' },
         { status: 400 }
       )
     }
@@ -36,7 +44,7 @@ export async function POST(request) {
       )
     }
 
-    // Verificar si el email ya existe
+    // Verificar si el email ya está registrado
     const existingUser = await prisma.user.findUnique({
       where: { email }
     })
@@ -48,7 +56,7 @@ export async function POST(request) {
       )
     }
 
-    // Hash de la contraseña
+    // Encriptar contraseña
     const hashedPassword = await hash(password, 10)
 
     // Crear usuario
@@ -57,11 +65,10 @@ export async function POST(request) {
         name,
         email,
         password: hashedPassword,
-        userType: userType === 'propietario' ? 'OWNER' : 'PROFESSIONAL'
+        userType: normalizedUserType === 'propietario' ? 'OWNER' : 'PROFESSIONAL'
       }
     })
 
-    // Log para confirmar creación
     console.log('Usuario creado:', user.id)
 
     return NextResponse.json({
@@ -75,12 +82,11 @@ export async function POST(request) {
     })
 
   } catch (error) {
-    // Log detallado del error
     console.error('Error completo:', error)
-    
+
     return NextResponse.json(
       { error: 'Error al crear usuario: ' + error.message },
       { status: 500 }
     )
   }
-} 
+}
