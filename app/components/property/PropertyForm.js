@@ -179,7 +179,7 @@ export default function PropertyForm() {
         <div className="propertyForm-content-wrapper">
           <nav className="propertyForm-nav">
             <div className="nav-left">
-                <div className="logo-wrapper">
+                <div className="logo-wrapper" onClick={() => router.push("/owner")}>
                   <img src="/logo.png" alt="Logo" className="logo" />
                 </div>
                 <h1 className="nav-title">Ingresar Propiedad</h1>
