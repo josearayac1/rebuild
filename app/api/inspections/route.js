@@ -69,45 +69,93 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const propertyId = searchParams.get('propertyId');
+    const status = searchParams.get('status');
 
-    if (!propertyId) {
-      return NextResponse.json({ error: 'Falta el propertyId' }, { status: 400 });
-    }
-
-    // Traer la propiedad y sus inspecciones
-    const property = await prisma.property.findUnique({
-      where: { id: Number(propertyId) },
-      include: {
-        propertyType: true,
-        inspections: {
-          orderBy: { visitDate: 'desc' },
-          include: {
-            inspectionReport: true
+    // Si se proporciona propertyId, obtener inspecciones de esa propiedad
+    if (propertyId) {
+      const property = await prisma.property.findUnique({
+        where: { id: Number(propertyId) },
+        include: {
+          propertyType: true,
+          inspections: {
+            orderBy: { visitDate: 'desc' },
+            include: {
+              inspectionReport: true
+            }
           }
         }
+      });
+
+      if (!property) {
+        return NextResponse.json({ error: 'Propiedad no encontrada' }, { status: 404 });
+      }
+
+      const inspections = property.inspections.map(insp => ({
+        ...insp,
+        property: {
+          propertyType: property.propertyType,
+          bedrooms: property.bedrooms,
+          bathrooms: property.bathrooms,
+          estateProject: property.estateProject,
+          address: property.address
+        }
+      }));
+
+      return NextResponse.json({ inspections, property });
+    }
+
+    // Si no se proporciona propertyId, obtener inspecciones filtradas por status si se proporciona
+    const where = {
+      inspectorId: null
+    };
+    if (status) {
+      where.status = status;
+    } else {
+      where.status = 'SOLICITADO';
+    }
+
+    const inspections = await prisma.inspection.findMany({
+      where,
+      include: {
+        property: {
+          include: {
+            propertyType: true,
+            photos: true
+          }
+        },
+        commune: true,
+        city: true,
+        region: true
+      },
+      orderBy: {
+        visitDate: 'asc'
       }
     });
 
-    if (!property) {
-      return NextResponse.json({ error: 'Propiedad no encontrada' }, { status: 404 });
-    }
-
-    // Adjunta los datos de la propiedad a cada inspección para facilitar el frontend
-    const inspections = property.inspections.map(insp => ({
-      ...insp,
-      property: {
-        propertyType: property.propertyType,
-        bedrooms: property.bedrooms,
-        bathrooms: property.bathrooms,
-        estateProject: property.estateProject,
-        address: property.address
-      }
-    }));
-
-    return NextResponse.json({ inspections, property });
+    return NextResponse.json({ inspections });
 
   } catch (error) {
     console.error('Error al obtener inspecciones:', error);
+    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
+  }
+}
+
+export async function PATCH(request) {
+  try {
+    const { id, status } = await request.json();
+    if (!id || !status) {
+      return NextResponse.json({ error: 'Faltan datos obligatorios' }, { status: 400 });
+    }
+
+    // Actualizar el estado de la inspección
+    const updated = await prisma.inspection.update({
+      where: { id },
+      data: { status },
+    });
+
+    return NextResponse.json({ message: 'Inspección actualizada', inspection: updated });
+  } catch (error) {
+    console.error('Error al actualizar inspección:', error);
     return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
   }
 } 
