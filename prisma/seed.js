@@ -71,6 +71,24 @@ async function main() {
     })
   }
 
+  // Nuevos modelos: UnitApu
+  const unidades = [
+    { name: 'm²' },
+    { name: 'm³' },
+    { name: 'ml' },
+    { name: 'kg' },
+    { name: 'u' },
+    { name: 'jornal' }
+  ];
+
+  for (const unidad of unidades) {
+    await prisma.unitApu.upsert({
+      where: { name: unidad.name },
+      update: {},
+      create: unidad,
+    });
+  }
+
   console.log('Base de datos poblada con éxito')
 }
 
