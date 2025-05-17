@@ -1,0 +1,95 @@
+.apu-container {
+  background: #fff;
+  border-radius: 8px;
+  margin: 40px auto;
+  padding: 40px 48px;
+  width: 80%;
+  min-height: 600px;
+  max-height: 80vh;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow-y: auto;
+}
+
+.apu-title {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.apu-input {
+  border: 1.5px solid #FFA500;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 1rem;
+  margin-bottom: 16px;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+.apu-section {
+  border: 1.5px solid #FFA500;
+  border-radius: 8px;
+  padding: 24px 24px 32px 24px;
+  margin: 32px 0 0 0;
+  background: #fff;
+  position: relative;
+}
+
+.apu-label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.apu-btn {
+  background-color: #f0ad4e;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 200px;
+  margin-right: 24px;
+  transition: background-color 0.3s;
+}
+.apu-btn:hover {
+  background: #FF9000;
+}
+
+.apu-category-box {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.apu-category-input {
+  flex: 1;
+  margin-right: 16px;
+}
+
+.apu-category-list {
+  margin-top: 16px;
+}
+
+.apu-category-item {
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #FFA500;
+}
+
+.apu-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 32px;
+}

@@ -146,7 +146,7 @@ body {
   color: #E53935;
 }
 
-.property-info-grid {
+.property-info-grid-a {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 200px;

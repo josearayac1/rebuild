@@ -237,8 +237,8 @@ model Apu {
   total           Float
 
   // Relaciones
-  item            Item      @relation(fields: [itemId], references: [id])
-  itemId          String    @unique
+  item            Item?      @relation(fields: [itemId], references: [id])
+  itemId          String?    @unique
   apuCategorys    ApuCategory[]
   userId          String
   user            User @relation(fields: [userId], references: [id])
@@ -270,7 +270,7 @@ model ApuDetail {
 
 model UnitApu {
   id              String        @id @default(cuid())
-  name            String
+  name            String        @unique
 
   // Relaciones
   apuDetails      ApuDetail[]  
