@@ -72,7 +72,7 @@ export default function PropertyDetail() {
               </span>
             </div>
           </div>
-          <div className="property-info-grid">
+          <div className="property-info-grid-a">
             <div className="property-info-column">
               <div><b>ID:</b> {property.id}</div>
               <div><b>Tipo de inmueble:</b> {property.propertyType?.name}</div>
